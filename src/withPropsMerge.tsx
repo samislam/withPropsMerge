@@ -8,7 +8,7 @@ interface MergerProps<ORIGINAL_PROPS extends object> {
   $preserve?: Optional<ORIGINAL_PROPS>
 }
 
-function WithMergeProps<ORIGINAL_PROPS extends object>(
+function withPropsMerge<ORIGINAL_PROPS extends object>(
   OriginalComponent: FC<ORIGINAL_PROPS>
 ): FC<ORIGINAL_PROPS & MergerProps<ORIGINAL_PROPS>> {
   return (props) => {
@@ -19,4 +19,4 @@ function WithMergeProps<ORIGINAL_PROPS extends object>(
   }
 }
 
-export default WithMergeProps
+export default withPropsMerge
