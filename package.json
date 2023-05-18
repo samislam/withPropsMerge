@@ -2,7 +2,7 @@
   "type": "commonjs",
   "types": "./@types/index.d.ts",
   "name": "withpropsmerge",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "a react HOC for merging props",
   "main": "./dist/index.js",
   "scripts": {
