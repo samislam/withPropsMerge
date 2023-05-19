@@ -1,4 +1,4 @@
-import React, { FC, forwardRef } from 'react'
+import React, { FC, PropsWithChildren, forwardRef } from 'react'
 import _ from 'lodash'
 import { Optional } from 'utility-types'
 import { mergeObjects } from 'mergerobjects'
@@ -9,15 +9,31 @@ interface MergerProps<ORIGINAL_PROPS extends object> {
 }
 
 function withPropsMerge<ORIGINAL_PROPS extends object>(OriginalComponent: FC<ORIGINAL_PROPS>) {
-  return forwardRef(
-    ({ $overwrite = [], $preserve = [], ...props }: ORIGINAL_PROPS & MergerProps<ORIGINAL_PROPS>, ref) => {
-      const $overwrite_ = _.isArray($overwrite) ? $overwrite : [$overwrite]
-      const $preserve_ = _.isArray($preserve) ? $preserve : [$preserve]
-      const injectedProps = mergeObjects(...$preserve_, props, ...$overwrite_)
-      const originalPropsFiltered = _.omit(injectedProps as any, ['$overwrite', '$preserve'])
-      return <OriginalComponent {...(originalPropsFiltered as ORIGINAL_PROPS)} ref={ref} />
-    }
-  )
+  return forwardRef((p: ORIGINAL_PROPS & MergerProps<ORIGINAL_PROPS>, ref) => {
+    // @ts-ignore
+    const { $overwrite = [], $preserve = [], children, ...props } = p
+    const $overwrite_ = _.isArray($overwrite) ? $overwrite : [$overwrite]
+    const $preserve_ = _.isArray($preserve) ? $preserve : [$preserve]
+    const mergedProps = mergeObjects(...$preserve_, props, ...$overwrite_)
+    const mergedPropsFiltered = _.omit(mergedProps as any, ['$overwrite', '$preserve', 'children'])
+    return (
+      <OriginalComponent {...(mergedPropsFiltered as ORIGINAL_PROPS)} ref={ref}>
+        {children}
+      </OriginalComponent>
+    )
+  })
 }
 
 export default withPropsMerge
+
+// interface ButtonProps {
+//   label: string
+//   test?: number
+// }
+// const Button = (props: ButtonProps) => {
+//   return <button></button>
+// }
+// const ButtonM = withPropsMerge(Button)
+// const App = () => {
+//   return <ButtonM label="" test={12} $overwrite={{ label: '' }}></ButtonM>
+// }
